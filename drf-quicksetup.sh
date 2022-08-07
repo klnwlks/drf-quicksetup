@@ -101,7 +101,7 @@ mk-model () {
 
     declare -A fields
     echo "Declare model fields"
-    echo "name type default"
+    echo "syntax: name type default"
     echo "types are [int, char, bool, str, date]"
     echo "\"end\" to stop adding fields"
 
@@ -168,6 +168,11 @@ mk-model () {
 
 help () {
     echo "usage: drf-quicksetup -n [name] -m [mode]"
+    echo "Modes:"
+    echo "blank - Creates an empty drf project"
+    echo "mkapp - Creates an empty app, have to be in project root to run this"
+    echo "mkmodel - Creates a model"
+    echo "mkserializer - Creates a serializer"
     exit 0
 }
 
