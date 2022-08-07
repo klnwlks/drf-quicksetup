@@ -26,9 +26,10 @@ blank-make () {
 	whitelist="http://localhost:3000"
     fi
 
-echo "CORS_ORIGIN_WHITELIST = [
-${ind}'$whitelist'
-]" >> ./$projName/settings.py
+    printf "%s\n"\
+	"CORS_ORIGIN_WHITELIST = ["\
+	"${ind}'$whitelist'"\
+	"]" >> ./$projName/settings.py
 }
 
 mk-app () {
@@ -77,10 +78,12 @@ mk-serializer () {
 	sed -i "2s/$/${model}/" $appName/serializers.py
     fi
 
-printf "\nclass ${1}(serializers.ModelSerializer):
-${ind}class Meta:
-${ind}${ind}model = ${model}
-${ind}${ind}fields = '__all__'\n" >> $appName/serializers.py
+    printf "\n\n%s\n%s\n%s\n%s"\
+	"class ${1}(serializers.ModelSerializer):"\
+	"${ind}class Meta:"\
+	"${ind}${ind}model = $model"\
+	"${ind}${ind}fields = '__all__'" >> $appName/serializers.py
+
 }
 
 mk-model () {
