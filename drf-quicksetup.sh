@@ -16,9 +16,6 @@ blank-make () {
     django-admin startproject "$projName"
     cd "$projName"
 
-    # i COULD use grep to find the appropriate lines 
-    # but why do that when this works too
-    # this is gonna come back to haunt me after a couple commits
     sed -i "40 i ${sind}'corsheaders',\n${sind}'rest_framework'," ./$projName/settings.py
     sed -i "52 i ${sind}'corsheaders.middleware.CorsMiddleware'," ./$projName/settings.py
 
@@ -29,8 +26,8 @@ blank-make () {
 	whitelist="http://localhost:3000"
     fi
 
-    echo "CORS_ORIGIN_WHITELIST = [
-    '$whitelist'
+echo "CORS_ORIGIN_WHITELIST = [
+${ind}'$whitelist'
 ]" >> ./$projName/settings.py
 }
 
