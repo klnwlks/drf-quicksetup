@@ -46,10 +46,12 @@ mk-app () {
     python manage.py startapp $1
     sed -i "42 i ${sind}'$1'," $projName/settings.py
 
+    printf "from rest_framework import serializers\n" >> $1/serializers.py
+    printf "from .models import " >> $1/serializers.py
 }
 
-mk-model () {
-    echo "input app name"
+mk-serializer () {
+    echo "Input app name"
     read appName
 
     if [ ! -d "${appName}/" ]; then
@@ -62,12 +64,39 @@ mk-model () {
 	exit 1
     fi
 
-    echo "these files will be changed, review if they are correct"
-    echo "${appName}/models.py"
-    echo "${appName}/serializers.py"
+    echo "Input model to be serialized"
+    read model
 
-    read confirm
-    if [[ "$confirm" != "y" ]]; then
+    check=$(cat $appName/models.py | grep -c "${model}")
+    if (( check == 0 )); then
+	echo "Model is not in app."
+	exit 1
+    fi
+
+    length=$(grep -n "from .models" $appName/serializers.py)
+    if (( ${#length} > 24 )); then 
+	sed -i "2s/$/, ${model}/" $appName/serializers.py
+    else
+	sed -i "2s/$/${model}/" $appName/serializers.py
+    fi
+
+printf "\nclass ${1}(serializers.ModelSerializer):
+${ind}class Meta:
+${ind}${ind}model = ${model}
+${ind}${ind}fields = '__all__'\n" >> $appName/serializers.py
+}
+
+mk-model () {
+    echo "Input app name"
+    read appName
+
+    if [ ! -d "${appName}/" ]; then
+	echo "App doesn't exist in django project."
+	exit 1
+    fi
+
+    if [ ! -f "manage.py" ]; then
+	echo "Not in a valid django project directory root. Exiting.."
 	exit 1
     fi
 
@@ -87,11 +116,7 @@ mk-model () {
 	fields+=(["$key"]=$(sed -e 's/^[^ ]* //' <<< "$attr"))
     done
 
-    local model="class ${1}(models.Model):"
-    local ttype
-    local type
-    local default
-
+    model="class ${1}(models.Model):"
     # pair type to field
     for i in "${!fields[@]}"; do
 	ttype=$(echo ${fields[$i]} | awk '{print $1}')
@@ -181,6 +206,12 @@ case "${mode}" in
     mkapp)
 	mk-app "$name"
 	echo "App ${name} created and registered"
+	exit 0
+	;;
+    mkserializer)
+	echo "Keep in mind that this will include all fields by default."
+	mk-serializer "$name"
+	echo "Created serializer ${name}"
 	exit 0
 	;;
     *) 
