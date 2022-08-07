@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# perhaps not the greatest idea i've had
 ind="    " # not a big fan of this
 sind="\ \ \ \ "
 
