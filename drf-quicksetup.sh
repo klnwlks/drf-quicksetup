@@ -168,7 +168,7 @@ mk-model () {
 
 help () {
     echo "usage: drf-quicksetup -n [name] -m [mode]"
-    echo "Modes:"
+    echo "modes:"
     echo "blank - Creates an empty drf project"
     echo "mkapp - Creates an empty app, have to be in project root to run this"
     echo "mkmodel - Creates a model"
@@ -177,7 +177,7 @@ help () {
 }
 
 if (("$#" < 2 || "$#" > 4)); then
-    echo "usage: drf-quicksetup -n [name] -m [mode]"
+    help
     exit 1
 fi
 
